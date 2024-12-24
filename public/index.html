@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách khóa học giảm giá</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Danh sách các khóa học giảm giá</h1>
+  <ul id="course-list"></ul>
+
+  <script>
+    async function fetchSaleCourses() {
+      const response = await fetch('/getsale');
+      const courses = await response.json();
+      const courseList = document.getElementById('course-list');
+
+      courses.forEach(course => {
+        const li = document.createElement('li');
+        li.textContent = `${course.name} - Giá: ${course.price} - Giảm giá: ${course.sale}%`;
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Xóa';
+        deleteButton.onclick = async () => {
+          await fetch(`/deletecourse/${course._id}`, { method: 'DELETE' });
+          li.remove();
+        };
+        li.appendChild(deleteButton);
+        courseList.appendChild(li);
+      });
+    }
+
+    fetchSaleCourses();
+  </script>
+</body>
+</html>
